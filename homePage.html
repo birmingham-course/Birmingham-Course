@@ -1,0 +1,155 @@
+<header>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    </head>
+    <style>
+        input {
+            width: 100%;
+            padding: 5px;
+            margin: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 5px;
+            margin: 10px;
+        }
+
+        #jobItemHolder {
+            border: solid;
+            border-color: lightgrey;
+            padding: 10px;
+            margin: 5px;
+            word-break: break-all;
+        }
+
+        #contentBox {
+            margin-top: 30px;
+        }
+
+        #jobTitle{
+            font-size: 32px;
+        }
+        #jobCompany{
+            font-size: 28px;
+        }
+
+
+
+        #jobCompany{
+
+        }
+    </style>
+</header>
+
+<body>
+    <div ng-app="app" ng-controller="controller" class="container" id="contentBox">
+        <div class="row">
+
+            <div id="mainContainer" class="col">
+                <h1>Add Job:</h1>
+                <input placeholder="Company" type="text" id="companyTxt" />
+                <input placeholder="Job Title" type="text" id="jobTitleTxt" />
+                <input placeholder="Description" type="text" id="descriptionTxt" />
+                <input placeholder="Salary" type="text" id="salaryTxt" />
+                <input placeholder="Contact Number" type="text" id="contactNumTxt" />
+                <button id="submitBtn">Submit</button>
+
+            </div>
+
+            <div class="col">
+                    <h1>Job Listings:</h1>
+                <div id="jobItemHolder" ng-repeat="job in jobsData">
+                    <p><strong></strong><span id="jobTitle">{{job.title}}</span> <span id="jobCompany">- {{job.company}}</span></p>
+                    <p><strong>Job Description:</strong> {{job.description}}</p>
+                    <p><strong>Salary: £{{job.salary}}</strong></p>
+                    <p>Contact us: {{job.contactNumber}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-firestore.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBeNOU7hAI3uCR6ArTjdf2CZWF7rs7qbYg",
+            authDomain: "job-listings-8897c.firebaseapp.com",
+            databaseURL: "https://job-listings-8897c.firebaseio.com",
+            projectId: "job-listings-8897c",
+            storageBucket: "job-listings-8897c.appspot.com",
+            messagingSenderId: "684092257257",
+            appId: "1:684092257257:web:5aacc8cc8b204f65"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var db = firebase.firestore();
+
+        var submitBtn = document.getElementById('submitBtn');
+        var getDataBtn = document.getElementById('getData');
+
+        var company = document.getElementById('companyTxt');
+        var contactNumber = document.getElementById('contactNumTxt');
+        var description = document.getElementById('descriptionTxt');
+        var salary = document.getElementById('salaryTxt');
+        var title = document.getElementById('jobTitleTxt');
+
+        var app = angular.module('app', []);
+        app.controller('controller', function ($scope) {
+            $scope.jobsData = [];
+            /*
+                        $scope.getJobsData = function () {
+                            console.log("getJobsData ran")
+                            db.collection("jobs").get().then((querySnapshot) => {
+                                querySnapshot.forEach((doc) => {
+                                    console.log(`${doc.id} => ${doc.data()}`);
+                                    $scope.jobsData.push(doc.data());
+                                });
+                            });
+                        }
+            */
+            db.collection("jobs")
+                .onSnapshot(function (querySnapshot) {
+                    $scope.jobsData = [];
+                    querySnapshot.forEach(function (doc) {
+                        $scope.jobsData.push(doc.data());
+                    });
+                    console.log("jobs: ", $scope.jobsData.join(", "));
+                    $scope.$apply();
+                });
+
+        })
+
+        submitBtn.addEventListener("click", addData);
+
+        function addData() {
+
+            db.collection("jobs").add({
+                company: company.value,
+                contactNumber: contactNumber.value,
+                description: description.value,
+                salary: salary.value,
+                title: title.value
+            })
+                .then(function (docRef) {
+                    console.log("Document written with ID: ", docRef.id);
+                    company.value = ""
+                    contactNumber.value = ""
+                    description.value = ""
+                    salary.value = ""
+                    title.value = ""
+                })
+                .catch(function (error) {
+                    console.error("Error adding document", error);
+                })
+        }
+
+    </script>
+</body>
