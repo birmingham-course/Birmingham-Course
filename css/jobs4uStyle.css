@@ -1,0 +1,115 @@
+input {
+    width: 100%;
+    padding: 5px;
+    margin: 10px;
+    border: 1px solid grey;
+}
+
+button {
+    width: 100%;
+    padding: 5px;
+    margin: 10px;
+}
+
+#jobItemHolder {
+    border: solid;
+    border-color: lightgrey;
+    padding: 10px;
+    margin: 15px;
+    word-break: break-all;
+}
+
+#contentBox {
+    margin-top: 30px;
+}
+
+#jobTitle {
+    font-size: 32px;
+}
+
+#jobCompany {
+    font-size: 28px;
+}
+
+#jobCompany {}
+
+#titleDivs {
+    margin-left: 10px;
+}
+
+#descriptionTxt{
+  height: 200px;
+  width: 95%;
+  word-break: break-all;
+}
+
+.textInp{
+    width: 45%;
+    margin: 10px;
+}
+
+body {
+    font-family: "Lato", sans-serif
+  }
+
+  .topnav {
+    color: pink;
+  }
+
+  #navBarSearchForm input[type=text] {
+    width: 530px !important;
+    height: 50px;
+  }
+
+  #buttons {
+    max-width: 750px;
+  }
+
+  body {
+    font-family: Arial;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  form.example input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+  }
+
+  form.example button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #2196F3;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none;
+    cursor: pointer;
+  }
+
+  form.example button:hover {
+    background: #0b7dda;
+  }
+
+  form.example::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  footer{
+      width: 300px;
+      margin: auto;
+      padding: 20px;
+  }
+
+  .listingText{
+    text-transform: capitalize;
+  }
