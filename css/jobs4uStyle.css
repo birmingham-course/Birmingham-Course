@@ -2,6 +2,7 @@ input {
     width: 100%;
     padding: 5px;
     margin: 10px;
+    border: 1px solid grey;
 }
 
 button {
@@ -36,8 +37,14 @@ button {
     margin-left: 10px;
 }
 
+#descriptionTxt{
+  height: 200px;
+  width: 95%;
+  word-break: break-all;
+}
+
 .textInp{
-    width: -webkit-fill-available;
+    width: 45%;
     margin: 10px;
 }
 
@@ -101,4 +108,8 @@ body {
       width: 300px;
       margin: auto;
       padding: 20px;
+  }
+
+  .listingText{
+    text-transform: capitalize;
   }
