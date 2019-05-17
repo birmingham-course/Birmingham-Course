@@ -1,4 +1,3 @@
-// Your web app's Firebase configuration
 var firebaseConfig = {
     apiKey: "AIzaSyBeNOU7hAI3uCR6ArTjdf2CZWF7rs7qbYg",
     authDomain: "job-listings-8897c.firebaseapp.com",
@@ -15,12 +14,13 @@ var db = firebase.firestore();
 
 var submitJobBtn = document.getElementById('submitJobBtn');
 
+var searchInp = document.getElementById('searchBar');
 var company = document.getElementById('companyTxt');
 var contactNumber = document.getElementById('contactNumTxt');
 var description = document.getElementById('descriptionTxt');
 var salary = document.getElementById('salaryTxt');
 var title = document.getElementById('jobTitleTxt');
-var category = document.getElementById('categoryTxt');
+var locationTxt = document.getElementById('locationTxt');
 
 var adminKeyInp = document.getElementById('adminKeyInp');
 
@@ -29,43 +29,24 @@ var app = angular.module('app', []);
 app.controller('controller', function ($scope) {
     $scope.isAdmin = false;
     $scope.jobsData = [];
-    $scope.jobCategories = [];
+    $scope.jobCategories = ["hairdressing", "construction", "technology", "teaching", "management", "retail", "other"];
+    $scope.currentCategories = ["all"];
+    $scope.selectedCategory = "";
+    $scope.filterByCat;
+    $scope.filterBySearch;
 
-
-
-    /*
-                $scope.getJobsData = function () {
-                    console.log("getJobsData ran")
-                    db.collection("jobs").get().then((querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
-                            console.log(`${doc.id} => ${doc.data()}`);
-                            $scope.jobsData.push(doc.data());
-                        });
-                    });
-                }
-    */
     db.collection("jobs")
         .onSnapshot(function (querySnapshot) {
             $scope.jobsData = [];
-            
+            $scope.currentCategories = ["all"];
+
             querySnapshot.forEach(function (doc) {
                 var addCat = true;
-                $scope.jobsData.push(doc.data());
-                if ($scope.jobCategories.length == 0) {
-                    $scope.jobCategories.push(doc.data().category);
-                } else {
-                    for (category in $scope.jobCategories) {
-                        if (doc.data().category == category) {
-                            addCat = false;
-                            break;
-                        }
-                    }
-                    if(addCat){
-                        console.log("cat added: "+doc.data().category);
-                        $scope.jobCategories.push(doc.data().category);
-                    }
+                $scope.jobsData.push(Object.assign({ uid: doc.id }, doc.data()));
+                if (!$scope.currentCategories.includes(doc.data().category)) {
+                    $scope.currentCategories.push(doc.data().category);
+                    console.log("cat added: " + doc.data().category);
                 }
-
             });
             console.log("jobs: ", $scope.jobsData.join(", "));
             $scope.$apply();
@@ -101,15 +82,38 @@ app.controller('controller', function ($scope) {
 
     }
 
+    $scope.searchEntered = function (search){
+        if(search == undefined){
+            search = "";
+        }
+        console.log("Search: "+search)
+        $scope.filterBySearch = search;
+        searchInp.value = "";
+    }
+
+    $scope.categoryClicked = function (cat) {
+        if (cat == "all") {
+            $scope.filterByCat = "";
+        } else {
+            $scope.filterByCat = cat;
+        }
+    }
+
     $scope.addListing = function () {
         console.log("Adding listing");
+        console.log("company: " + company.value + " | contactNum: " + contactNumber.value + " | description: " + description.value + " | salary: " + salary.value + " | title: " + title.value + " | category: " + $scope.selectedCategory + " | timestamp: " + new Date() + " | location: " + locationTxt.value);
+        $scope.addToDb();
+    }
+
+    $scope.addToDb = function () {
         db.collection("jobs").add({
             company: company.value,
             contactNumber: contactNumber.value,
             description: description.value,
             salary: salary.value,
             title: title.value,
-            category: category.value,
+            category: $scope.selectedCategory,
+            location: locationTxt.value,
             timestamp: + new Date()
         })
             .then(function (docRef) {
@@ -119,11 +123,21 @@ app.controller('controller', function ($scope) {
                 description.value = ""
                 salary.value = ""
                 title.value = ""
-                category.value = ""
+                locationTxt.value = ""
+                $scope.selectedCategory = ""
             })
             .catch(function (error) {
                 console.error("Error adding document", error);
             })
+    }
+
+    $scope.deleteListing = function(uid){
+        console.log("deleting doc with id: "+uid);
+        db.collection("jobs").doc(uid).delete().then(function() {
+            console.log("Document successfully deleted!");
+        }).catch(function(error) {
+            console.error("Error removing document: ", error);
+        });
     }
 
     $scope.validateFormInfo = function () {

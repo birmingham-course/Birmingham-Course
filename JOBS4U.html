@@ -25,8 +25,11 @@
 
 </head>
 
+
 <body g-app="app" ng-controller="controller">
   <div ng-app="app" ng-controller="controller">
+    
+    <!-- Search -->
     <div class="w3-content" style="max-width:2000px;">
       <div class="w3-display-container w3-center">
         <img src="images\working.jpeg" style="width:100%; max-width:1700px">
@@ -35,7 +38,7 @@
             <h1>Jobs 4 U</h1>
             <div class="example">
               <input ng-model="searchInp" id="searchBar" type="text" placeholder="Search.." name="search">
-              <button type="button" class="btn btn-primary" ng-click="searchEntered(searchInp)">
+              <button type="button" class="button btn-primary" ng-click="searchEntered(searchInp)">
                 <i class="fa fa-search"></i>
               </button>
             </div>
@@ -45,32 +48,30 @@
       </div>
     </div>
 
-    <!-- The Band Section -->
-
+    <!-- Categories -->
     <div class="container" id="contentBox">
+      <h3 style="text-align: center;">Filter By:</h3>
       <div class="row">
-        <div class="card col-md-3 col-xl-2" style="width: 18rem; margin: 1rem;" ng-repeat="cat in currentCategories">
-          <img class="card-img-top" ng-src="images\{{cat}}.jpg" alt="Card image cap" style="margin-top: inherit;">
+        <div class="card col-md-3 col-xl-2" style="width: 18rem; margin: 1rem;" ng-repeat="cat in currentCategories" ng-style="{'background':(filterByCat == cat)?'powderblue':'white'}">
+          <img class="card-img-top cat-img" ng-src="images\{{cat}}.jpg" alt="Card image cap" style="margin-top: inherit;">
           <div class="card-body">
             <h5 class="card-title" style="text-transform: capitalize;">{{cat}}</h5>
-            <p class="card-text">Here is a small description of {{cat}} careers </p>
-            <a ng-click="categoryClicked(cat)" class="btn btn-primary">Click here for {{cat}} careers</a>
+            <button ng-click="categoryClicked(cat)" style="text-transform: capitalize;" class="button btn-primary">{{cat}} careers</button>
           </div>
         </div>
       </div>
 
+      <!-- Job Listings -->
       <h1 id="titleDivs" style="margin-top:40px; width:100%; text-align:center;">Job Listings:</h1>
-
       <div class="row">
-        <div id="jobItemHolder" class="card border-dark mb-3" style="width:100%" ng-repeat="job in jobsData | orderBy: 'timestamp' | filter: filterByCat | filter: filterBySearch;"
-          class="col-lg-5">
+        <div id="jobItemHolder" class="card border-dark mb-3 col-lg-5 listingText" ng-repeat="job in jobsData | orderBy: 'timestamp' | filter: filterByCat | filter: filterBySearch;">
           <div class="card-header">
-            <span style="font-size: x-large;"class="listingText">
+            <span style="font-size: x-large;">
               <strong>{{job.title}}</strong>
             </span>
-            <span class="listingText" style="float:right; margin-top:8px;">{{job.category}}</span>
+            <span style="float:right; margin-top:8px;">{{job.category}}</span>
           </div>
-          <div class="card-body text-dark card-text listingText" style="padding-top:5px;">
+          <div class="card-body text-dark card-text" style="padding-top:5px;">
             <span style="font-size:large;">{{job.company}}</span>
             <br>
             <span style="font-size:large; color:grey;">
@@ -84,12 +85,14 @@
             <span style="text-transform: none;">{{job.description}}</span>
             <br>
             <span style="color: red;">Contact us: {{job.contactNumber}}</span>
+            <button ng-show="isAdmin" id="deleteBtn" class="button btn-danger" ng-click="deleteListing(job.uid)">Delete</button>
           </div>
         </div>
       </div>
     </div>
     <br>
 
+    <!-- Add Listing Modal -->
     <div ng-show="isAdmin">
       <button type="button" data-target="#addJobModal" data-toggle="modal" class="btn btn-primary btn-lg">Add Listing</button>
     </div>
@@ -105,9 +108,9 @@
             <input placeholder="Job Title" class="textInp" type="text" id="jobTitleTxt" />
             <textarea placeholder="Description" class="textInp" type="text" id="descriptionTxt"></textarea>
             <input placeholder="Salary" class="textInp" type="text" id="salaryTxt" />
-            <input placeholder="Location" class="textInp" type="text" id="locationTxt"/>
+            <input placeholder="Location" class="textInp" type="text" id="locationTxt" />
             <input placeholder="Contact Number" class="textInp" type="text" id="contactNumTxt" />
-            <select ng-model="selectedCategory" class="textInp" style="padding:5px;" >
+            <select ng-model="selectedCategory" class="textInp" style="padding:5px;">
               <option value="" disabled selected>Select a category</option>
               <option ng-repeat="cat in jobCategories">{{cat}}</option>
             </select>
@@ -119,8 +122,6 @@
         </div>
       </div>
     </div>
-
-    <!-- End Page Content -->
 
     <!-- Footer -->
     <footer>
